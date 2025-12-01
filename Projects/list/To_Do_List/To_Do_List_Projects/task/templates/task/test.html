@@ -1,0 +1,7 @@
+{% for ob in model %}
+<p>{{ob}}</p>
+{% if ob.is_published %}
+<p>{{ob.is_published}}</p>
+<p>{{ob.creation_date}}</p>
+{% endif %}
+{% endfor  %}

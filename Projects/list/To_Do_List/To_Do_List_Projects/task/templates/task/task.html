@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Список завдань</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+        .user-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .user-bar span {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .logout-button {
+            text-decoration: none;
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+        }
+        .add-task-link {
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .add-task-link:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+        li.completed {
+            background-color: #d4edda;
+        }
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        form {
+            margin: 0;
+        }
+        .action-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        .action-button:active {
+            transform: scale(1.2);
+        }
+        .complete-button {
+            color: green;
+        }
+        .complete-button:hover {
+            color: darkgreen;
+        }
+        .delete-button {
+            color: red;
+        }
+        .delete-button:hover {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+        <div class="user-bar">
+            <span>👤 {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="logout-button">🚪 Вийти</a>
+        </div>
+
+    <header>
+        <h1>Список завдань</h1>
+        <a href="/add/" class="add-task-link">➕ Додати завдання</a>
+    </header>
+
+    <ul>
+        {% for obj in taski %}
+            <li class="{% if obj.is_published %}completed{% endif %}">
+                <span>{{ obj }}</span>
+                <div class="task-actions">
+                    {% if obj.is_published %}
+                        <form method="post" action="{% url 'uncomplete_task' obj.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="action-button complete-button" title="Скасувати виконання">✅</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'complete_task' obj.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="action-button complete-button" title="Позначити як виконане">☐</button>
+                        </form>
+                    {% endif %}
+                    <form method="post" action="{% url 'delete_task' obj.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="action-button delete-button" title="Видалити завдання">🗑️</button>
+                    </form>
+                </div>
+            </li>
+        {% empty %}
+            <li>Немає задач 😴</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+{% endif %}
