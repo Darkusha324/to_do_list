@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.messages.context_processors import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from pymsgbox import password
 from requests import post
 
 from .models import Task
